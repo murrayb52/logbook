@@ -1,0 +1,5 @@
+The Book Shoppe:
+----------------
+Wants a scanner.
+Wants to sell online.
+Needs to be able to rate book quality (their problem).
