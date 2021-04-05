@@ -1,0 +1,507 @@
+Create a project:
+>_ django-admin startproject mysite
+Navigate to project directory:
+>_ cd mysite
+Run server to check setup was performed correctly:
+>_ python manage.py runserver
+
+Now that the environment (project) has been setup, we can create an app. Each application you write in Django consists of a Python package that follows a certain convention.
+Create an app:
+>_ python manage.py startapp polls
+
+Write a view in views.py.
+
+To call the view, we need to map it to a URL - and for this we need a URLconf.
+To create a URLconf in the polls directory, create a file called urls.py.
+Point the root URLconf at the polls.urls module. In Website/urls.py, add an import for django.urls.include and insert an include() in the urlpatterns list.
+
+------------------
+| DATABASE SETUP |
+------------------
+This happens in Website/settings.py.
+
+By default, the configuration uses SQLite. When starting your first real project, however, you may want to use a more scalable database like PostgreSQL, to avoid database-switching headaches down the road.
+https://docs.djangoproject.com/en/3.1/intro/tutorial02/
+
+Set TIME_ZONE to your time zone (UTC+2 for SA).
+The INSTALLED_APPS setting at the top of the file holds the names of all Django applications that are activated in this Django instance.
+
+The migrate command looks at the INSTALLED_APPS setting and creates any necessary database tables according to the database settings in your mysite/settings.py file and the database migrations shipped with the app
+>_ python manage.py migrate
+
+
+-------------------
+| Creating models |
+-------------------
+Now we’ll define your models – essentially, your database layout, with additional metadata.
+
+A model is the single, definitive source of truth about your data. It contains the essential fields and behaviors of the data you’re storing. Django follows the DRY Principle. The goal is to define your data model in one place and automatically derive things from it.
+
+Models are the blueprints for how data is stored, e.g. a 'book' model would have title, author and ISBN sections. We need to create that blueprint of storing the information we have about the 'books' we keep in our database.
+
+You can use an optional first positional argument to a Field to designate a human-readable name. That’s used in a couple of introspective parts of Django, and it doubles as documentation. If this field isn’t provided, Django will use the machine-readable name. In this example, we’ve only defined a human-readable name for Question.pub_date.
+
+---------------------
+| Activating models |
+---------------------
+That small bit of model code gives Django a lot of information. With it, Django is able to:
+
+    Create a database schema (CREATE TABLE statements) for this app.
+    Create a Python database-access API for accessing Question and Choice objects.
+
+But first we need to tell our project that the polls app is installed.
+To include the app in our project, we need to add a reference to its configuration class in the INSTALLED_APPS setting. The PollsConfig class is in the polls/apps.py file, so its dotted path is 'polls.apps.PollsConfig'.
+Add app to Website settings:
+	'Importer.apps.ImporterConfig'
+
+Now Django knows to include the polls app.
+Tell Django that you’ve made some changes to your models (in this case, you’ve made new ones) and that you’d like the changes to be stored as a migration:
+>_ python manage.py makemigrations
+Migrations are how Django stores changes to your models (and thus your database schema) - they’re files on disk.
+
+The sqlmigrate command takes migration names and returns their SQL.
+>_ python manage.py sqlmigrate polls 0001
+
+The migrate command takes all the migrations that haven’t been applied (Django tracks which ones are applied using a special table in your database called django_migrations) and runs them against your database - essentially, synchronizing the changes you made to your models with the schema in the database.
+'>_ python manage.py migrate
+
+remember the three-step guide to making model changes:
+
+    Change your models (in models.py).
+    Run python manage.py makemigrations to create migrations for those changes
+    Run python manage.py migrate to apply those changes to the database.
+
+NOTE:
+	Editing the models (in the polls/models.py file) by adding a __str__() method helps with identifying objects in a database.
+
+	It’s important to add __str__() methods to your models, not only for your own convenience when dealing with the interactive prompt, but also because objects’ representations are used throughout Django’s automatically-generated admin.
+
+########################
+  Playing with the API
+########################
+This is how we directly interact with the database API. Django provides a rich database lookup API that's entirely driven by keyword arguments.
+Some keywords to keep in mind:
+>_ id
+>_ question_text__startswith
+>_ pub_date__year
+
+>_ python manage.py shell
+
+We’re using this instead of simply typing “python”, because manage.py sets the DJANGO_SETTINGS_MODULE environment variable, which gives Django the Python import path to your mysite/settings.py file.
+
+-------------------------------------------------------------------------------------------
+
+Django creates a set to hold the "other side" of a ForeignKey relation (e.g. a question's choice) which can be accessed via the API.
+>_ q = Question.objects.get(pk=1)
+
+# Display any choices from the related object set -- none so far.
+>>> q.choice_set.all()
+
+-------------------------------------------------------------------------------------------
+>>> c = q.choice_set.create(choice_text='Just hacking again', votes=0)
+
+# Choice objects have API access to their related Question objects.
+>>> c.question
+<Question: What's up?>
+
+# And vice versa: Question objects get access to Choice objects.
+>>> q.choice_set.all()
+<QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+>>> q.choice_set.count()
+3
+
+-------------------------------------------------------------------------------------------
+
+The API automatically follows relationships as far as you need.
+Use double underscores to separate relationships.
+This works as many levels deep as you want; there's no limit.
+Find all Choices for any question whose pub_date is in this year (reusing the 'current_year' variable we created above).
+>_ Choice.objects.filter(question__pub_date__year=current_year)
+<QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+
+Let's delete one of the choices. Use delete() for that.
+>_ c = q.choice_set.filter(choice_text__startswith='Just hacking')
+>_ c.delete()
+
+For full details on the database API, see the Database API reference:
+https://docs.djangoproject.com/en/3.1/topics/db/queries/
+
+
+##############################
+ DJANGO ADMIN
+##############################
+Generating admin sites for your staff or clients to add, change, and delete content is tedious work that doesn’t require much creativity. For that reason, Django entirely automates creation of admin interfaces for models.
+
+The admin isn’t intended to be used by site visitors. It’s for site managers.
+
+Create a user who can login to the admin site:
+>_ python manage.py createsuperuser
+Enter your desired username and press enter:
+>_ Username: admin
+
+--------------------------------
+| Start the development server |
+--------------------------------
+
+>_ python manage.py runserver
+
+Navigate to [web_domain]/admin
+
+We need to tell the admin if certain objects have an admin interface. To do this, open the polls/admin.py file, and edit it to look like this:
+""
+from .models import [model]
+
+admin.site.register([model])
+""
+
+##########
+# PART 3 #
+##########
+Creating the public interface – “views.”
+A view is a “type” of Web page in your Django application that generally serves a specific function and has a specific template.
+
+In Django, web pages and other content are delivered by views. Each view is represented by a Python function (or method, in the case of class-based views). Django will choose a view by examining the URL that’s requested (to be precise, the part of the URL after the domain name).
+
+To get from a URL to a view, Django uses what are known as ‘URLconfs’. A URLconf maps URL patterns to views. More information found here: https://docs.djangoproject.com/en/3.1/topics/http/urls/
+
+This view takes an argument:
+def detail(request, question_id):
+    return HttpResponse("You're looking at question %s." % question_id)
+
+When somebody requests a page from your website – say, “/polls/34/”, Django will load the mysite.urls Python module because it’s pointed to by the ROOT_URLCONF setting. It finds the variable named urlpatterns and traverses the patterns in order. After finding the match at 'polls/', it strips off the matching text ("polls/") and sends the remaining text – "34/" – to the ‘polls.urls’ URLconf for further processing. There it matches '<int:question_id>/', resulting in a call to the detail() view like so:
+""
+detail(request=<HttpRequest object>, question_id=34)
+""
+The question_id=34 part comes from <int:question_id>. Using angle brackets “captures” part of the URL and sends it as a keyword argument to the view function. The :question_id> part of the string defines the name that will be used to identify the matched pattern, and the <int: part is a converter that determines what patterns should match this part of the URL path.
+
+--------------------------------------
+Write views that actually do something
+--------------------------------------
+
+Each view is responsible for doing one of two things: returning an HttpResponse object containing the content for the requested page, or raising an exception such as Http404. The rest is up to you.
+All Django wants is that HttpResponse. Or an exception.
+
+It is not advised to hard-coded a page layout in the models.py file. Instead, create a template which dictates how the information is displayed. This allows us to separate the acquisition of data from the displaying of that data, making editing either section easier.
+
+Your project’s TEMPLATES setting describes how Django will load and render templates. The default settings file configures a DjangoTemplates backend whose APP_DIRS option is set to True. By convention DjangoTemplates looks for a “templates” subdirectory in each of the INSTALLED_APPS.
+
+NOTE: it is important that 'templates' contains another subdirectory with the same name as the app. Otherwise, if you had a template with the same name in a different application, Django would be unable to distinguish between them. The act of putting templates inside another directory named for the application itself is called 'namespacing'.
+
+------------------
+render() function
+------------------
+It’s a very common idiom to load a template, fill a context and return an HttpResponse object with the result of the rendered template. Django provides a shortcut by using the render method:
+""
+return render(request, 'polls/index.html', context)
+""
+The render() function takes the request object as its first argument, a template name as its second argument and a dictionary as its optional third argument. It returns an HttpResponse object of the given template rendered with the given context.
+
+Note that once we’ve done this in all these views, we no longer need to import loader and HttpResponse (you’ll want to keep HttpResponse if you still have the stub methods for detail, results, and vote).
+
+------------------------
+Raising a 404 error
+------------------------
+try:
+	# Try do something with a requested object
+except object.DoesNotExist:
+    # If specific object does not exist, raise HTTP 4040
+    raise Http404("Erro text here")
+# Use render() shortcut as above
+return render(request, '[template.html]', {'question': question})
+
+-------------------------------------
+A shortcut: get_object_or_404()
+-------------------------------------
+It’s a very common idiom to use get() and raise Http404 if the object doesn’t exist. Django provides a shortcut.
+
+This can be used to replace the above lines in "Raising a 404 error"
+
+The get_object_or_404() function takes a Django model as its first argument and an arbitrary number of keyword arguments, which it passes to the get() function of the model’s manager. It raises Http404 if the object doesn’t exist.
+
+There’s also a get_list_or_404() function, which works just as get_object_or_404() – except using filter() instead of get(). It raises Http404 if the list is empty.
+
+--------------------------------
+Using the template system
+--------------------------------
+The template system uses dot-lookup syntax to access variable attributes. In the example of {{ question.question_text }}, first Django does a dictionary lookup on the object question. Failing that, it tries an attribute lookup – which works, in this case. If attribute lookup had failed, it would’ve tried a list-index lookup.
+
+Template guide here: https://docs.djangoproject.com/en/3.1/topics/templates/
+
+-------------------------------------------
+Removing hardcoded URLs in templates
+-------------------------------------------
+Hard-coding urls amkes it challenging to change URLs on projects with a lot of templates.
+Since you defined the name argument in the path() functions in the polls.urls module, you can remove a reliance on specific URL paths defined in your url configurations by using the {% url %} template tag.
+Instead of this:
+	href="/polls/{{ question.id }}/"
+Use this:
+	href="{% url 'detail' question.id %}"
+The way this works is by looking up the URL definition as specified in the polls.urls module. You can see exactly where the URL name of ‘detail’ is defined below:
+""
+	# the 'name' value as called by the {% url %} template tag
+	path('<int:question_id>/', views.detail, name='detail'),
+""
+If you want to change the URL of the polls detail view to something else, you would change it in polls/urls.py:
+""
+	# added the word 'specifics'
+	path('specifics/<int:question_id>/', views.detail, name='detail'),
+""
+
+------------------------------
+Namespacing URL names
+------------------------------
+In real Django projects, there might be five, ten, twenty apps or more. For example, the polls app has a detail view, and so might an app on the same project that is for a blog. 
+To ensure Django knows which app view to create fora url when using the {% url %} template tag, add namespaces to URLconf:
+In [app_name]/urls.py, add an "app_name" to set application namespace:
+""
+	app_name = 'polls'
+""
+
+Now change your polls/index.html template to point at the namespaced detail view:
+href="{% url 'polls:detail' question.id %}"
+
+
+#################################################
+ PART 4: Form processing and cutting down code
+#################################################
+""
+<form action="{% url 'polls:vote' question.id %}" method="post">
+
+{% for choice in question.choice_set.all %}
+<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+{% endfor %}
+<input type="submit" value="Vote">
+</form>
+""
+
+We set the form’s action to {% url 'polls:vote' question.id %}, and we set method="post". Using method="post" (as opposed to method="get") is very important, because the act of submitting this form will alter data server-side. Whenever you create a form that alters data server-side, use method="post". This tip isn’t specific to Django; it’s good Web development practice in general.
+
+Since we’re creating a POST form (which can have the effect of modifying data), we need to worry about Cross Site Request Forgeries. Thankfully, you don’t have to worry too hard, because Django comes with a helpful system for protecting against it. In short, all POST forms that are targeted at internal URLs should use the {% csrf_token %} template tag.
+
+request.POST is a dictionary-like object that lets you access submitted data by key name. In this case, request.POST['choice'] returns the ID of the selected choice, as a string. request.POST values are always strings.
+
+{% for option in question.choice_set.all %}
+        <!-- The value of each radio button is the associated question choice’s ID.
+        The name of each radio button is "selection". That means, when somebody selects
+        one of the radio buttons and submits the form, it’ll send the POST data
+        selection=# where # is the ID of the selected choice.
+        This is the basic concept of HTML forms. -->
+        
+        <input type="radio" name="selection" id="choice{{ forloop.counter }}" value="{{ option.id }}">
+        
+        <!-- forloop.counter indicates how many times the for tag has gone through its loop -->
+        <!-- The <label> tag allows you to click on the label, and is treated like clicking
+        the associated input element. -->
+        <!-- The 'for' attribute gives the label element the ID of the associated input element. This
+        implies, among other things, that when the label element receives focus (e.g. by being clicked on),
+        it passes the focus on to its associated control. -->
+        
+        <label for="choice{{ forloop.counter }}">{{ option.choice_text }}</label><br>
+
+    {% endfor %}
+
+----------------------------
+Race conditions
+----------------------------
+Be careful of 'race conditions': https://docs.djangoproject.com/en/3.1/ref/models/expressions/#avoiding-race-conditions-using-f
+
+Race conditions occur when two users request the same object from the database at the same time (or at least, in the case of forms, both users request the objects from the database before submitting the form and updating the database). This could result in a databse entry being updated one value less than the expected value, in the case of incrementing integers like vote counts.
+
+---------------------------
+Generic views
+---------------------------
+When we have multiple views that represent a common case of basic Web development (like getting data from the database according to a parameter passed in the URL, loading a template and returning the rendered template) it is easier to use the shortcut provided by Django, called the “generic views” system (or class-based views).
+Generic views abstract common patterns to the point where you don’t even need to write Python code to write an app.
+
+
+Each generic view needs to know what model it will be acting upon. This is provided using the model attribute.
+
+The DetailView generic view expects the primary key value captured from the URL to be called "pk", so we’ve changed question_id to pk for the generic views.
+
+At its core, a class-based view allows you to respond to different HTTP request methods with different class instance methods, instead of with conditionally branching code inside a single view function.
+
+## Okay, generic views are difficult to understand. Moving on... ##
+
+
+#############################
+ PART 5: AUTOMATED TESTING
+#############################
+https://docs.djangoproject.com/en/3.1/topics/testing/
+
+Tests are routines that check the operation of your code. You create a set of tests once, and then as you make changes to your app, you can check that your code still works as you originally intended, without having to perform time consuming manual testing.
+
+Some programmers follow a discipline called “test-driven development”; they actually write their tests before they write their code. This might seem counter-intuitive, but in fact it’s similar to what most people will often do anyway: they describe a problem, then create some code to solve it. Test-driven development formalizes the problem in a Python test case.
+
+It is advised to write a new test each time a new feature is implemented.
+
+Tests are created in [app_name]/tests.py
+In the terminal, we can run our test:
+>_ python manage.py test polls
+
+What happens is this:
+    - manage.py test polls looked for tests in the polls application
+    - it finds a subclass of the django.test.TestCase class
+    - it creates a special database for the purpose of testing
+    - it looks for test methods - ones whose names begin with test
+    - in test_was_published_recently_with_future_question, it creates a Question instance whose pub_date field is 30 days in the future
+    - … and using the assertIs() method, it discovers that its was_published_recently() returns True, though we want it to return False
+
+The test informs us which test failed and even the line on which the failure occurred.
+
+After identifying a bug, we wrote a test that exposes it and corrected the bug in the code so our test passes.
+
+Many other things might go wrong with our application in the future, but we can be sure that we won’t inadvertently reintroduce this bug, because running the test will warn us immediately. We can consider this little portion of the application pinned down safely forever.
+
+NOTE: We write tests even for bugs we uncover manually so that we can repeat the tests in future versions of the programme to ensure the bug was not reintroduced.
+
+Whatever needs to be added to the software to accomplish this should be accompanied by a test, whether you write the test first and then make the code pass the test, or work out the logic in your code first and then write a test to prove it.
+
+## When testing, more is better ##
+At worst, as you continue developing, you might find that you have some tests that are now redundant. Even that’s not a problem; in testing redundancy is a good thing.
+
+As long as your tests are sensibly arranged, they won’t become unmanageable. Good rules-of-thumb include having:
+	- a separate TestClass for each model or view
+    - a separate test method for each set of conditions you want to test
+    - test method names that describe their function
+
+--------------------------
+The Django test client
+--------------------------
+Django provides a test Client to simulate a user interacting with the code at the view level. We can use it in tests.py or even in the shell.
+
+>_ python manage.py shell
+>_ from django.test.utils import setup_test_environment
+>_ setup_test_environment()
+>_ from django.test import Client
+>_ client = Client()
+>_ response = client.get('/')
+
+###############################
+ PART 6: APP LOOK AND FEEL
+###############################
+Aside from the HTML generated by the server, web applications generally need to serve additional files — such as images, JavaScript, or CSS — necessary to render the complete web page. In Django, we refer to these files as “static files”.
+
+The django.contrib.staticfiles collects static files from each of your applications (and any other places you specify) into a single location that can easily be served in production. This helps managing multiple sets of static files - particularly in bigger projects.
+Django looks for files in [app_name]/static automatically as long as that app is listed in INSTALLED_APPS(the same way it knows to looks for templates in [app_name]/templates).
+
+Your stylesheet should be at polls/static/polls/style.css. Because of how the AppDirectoriesFinder staticfile finder works, you can refer to this static file in Django as polls/style.css, similar to how you reference the path for templates.
+
+The {% static %} template tag generates the absolute URL of static files. Examle from index.html:
+
+"""
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+"""
+
+That’s all you need to do for development.
+
+
+Warning: The {% static %} template tag is not available for use in static files which aren’t generated by Django, like your stylesheet. You should always use relative paths to link your static files between each other, because then you can change STATIC_URL (used by the static template tag to generate its URLs) without having to modify a bunch of paths in your static files as well.
+
+
+Change list colours to green:
+li a {
+    color: green;
+}
+
+Make a background image for the body:
+body {
+    background: white url("images/background.png") no-repeat;
+}
+
+More info on static files: https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+####################################
+ PART 7: CUSTOIMISE DJANGO ADMIN
+####################################
+To customise the admin form representation, create a model admin class then pass it as the second argument to admin.site.register().
+This particular change above makes the “Publication date” come before the “Question” field:
+"""
+class QuestionAdmin(admin.ModelAdmin):
+    fields = ['pub_date', 'question_text']
+
+admin.site.register(Question, QuestionAdmin)
+"""
+
+We can also split a form into fieldsets(headings/categories):
+"""
+class QuestionAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None,               {'fields': ['question_text']}),
+        ('Date information', {'fields': ['pub_date']}),
+    ]
+
+admin.site.register(Question, QuestionAdmin)
+"""
+
+Django knows that a ForeignKey should be represented in the admin as a <select> box. In our case, only one question exists at this point.
+
+Note the “Add Another” link next to “Question.” Every object with a ForeignKey relationship to another gets this for free. When you click “Add Another”, you’ll get a popup window with the “Add question” form. If you add a question in that window and click “Save”, Django will save the question to the database and dynamically add it as the selected choice on the “Add choice” form you’re looking at.
+
+Removing the register() call for the Choice model and instead adding it as an inline, we create a more efficient way of adding Choice objects to the system.
+This tells Django: “Choice objects are edited on the Question admin page. By default, provide enough fields for 3 choices.”
+
+
+Form representations inculde admin.StackedInLine, admin.TabularInLine
+One small problem, though. It takes a lot of screen space to display all the fields for entering related Choice objects. For that reason, Django offers a tabular way of displaying inline related objects. To use it, change the ChoiceInline declaration to read.
+
+--------------------------------------
+Customize the admin change list
+--------------------------------------
+Add object characteristics to display:
+	list_display = ('question_text', 'pub_date')
+
+Adjust a model to give it different form representation in admin:
+	was_published_recently.admin_order_field = 'pub_date'
+    was_published_recently.boolean = True
+    was_published_recently.short_description = 'Published recently?'
+
+Add a filter sidebar option:
+	list_filter = ['pub_date']
+The type of filter displayed depends on the type of field you’re filtering on. Because pub_date is a DateTimeField, Django knows to give appropriate filter options: “Any date”, “Today”, “Past 7 days”, “This month”, “This year”.
+
+Add a search capability:
+	search_fields = ['question_text']
+
+More options on admin representation here: https://docs.djangoproject.com/en/3.1/ref/contrib/admin/#django.contrib.admin.ModelAdmin.list_per_page
+
+-------------------------------------------------
+Customise admin look and feel
+-------------------------------------------------
+Create a templates directory in your project directory (the one that contains manage.py). Templates can live anywhere on your filesystem that Django can access. (Django runs as whatever user your server runs.) However, keeping your templates within the project is a good convention to follow.
+Open your settings file (mysite/settings.py, remember) and add a DIRS option in the TEMPLATES setting:
+	'DIRS': [BASE_DIR, 'templates'],
+DIRS is a list of filesystem directories to check when loading Django templates; it’s a search path.
+
+Just like the static files, we could have all our templates together, in one big templates directory, and it would work perfectly well. However, templates that belong to a particular application should be placed in that application’s template directory (e.g. polls/templates) rather than the project’s (templates). 
+
+Now create a directory called admin inside templates, and copy the template admin/base_site.html from within the default Django admin template directory in the source code of Django itself (django/contrib/admin/templates) into that directory.
+
+If you have difficulty finding where the Django source files are located on your system, run the following command:
+>_ python -c "import django; print(django.__path__)"
+
+Then, edit the file and replace {{ site_header|default:_('Django administration') }} (including the curly braces) with your own site’s name as you see fit.
+
+We use this approach to teach you how to override templates. In an actual project, you would probably use the django.contrib.admin.AdminSite.site_header attribute to more easily make this particular customization.
+
+Note that any of Django’s default admin templates can be overridden. To override a template, do the same thing you did with base_site.html – copy it from the default directory into your custom directory, and make changes.
+
+------------------------------------------------------------
+Customising application templates
+------------------------------------------------------------
+Since APP_DIRS is set to True (as above), Django automatically looks for a templates/ subdirectory within each application package, for use as a fallback (don’t forget that django.contrib.admin is an application).
+
+Our poll application is not very complex and doesn’t need custom admin templates. But if it grew more sophisticated and required modification of Django’s standard admin templates for some of its functionality, it would be more sensible to modify the application’s templates, rather than those in the project. That way, you could include the polls application in any new project and be assured that it would find the custom templates it needed.
+
+See template loading documentation: https://docs.djangoproject.com/en/3.1/topics/templates/#template-loading
+
+------------------------------------------
+Customise the admin index page 
+------------------------------------------
+The index is probably the most important page of the admin and should be easy to use, therefore it may require some customisation to be made efficient to navigate.
+The template to customize is admin/index.html. Here, you may want to customise the order in which apps appear because all apps in INSTALLED_APPS are, by default, listed alphabetically. (Do the same as with admin/base_site.html in the previous section – copy it from the default directory to your custom template directory).
+
+Edit the file, and you’ll see it uses a template variable called app_list. That variable contains every installed Django app. Instead of using that, you can hard-code links to object-specific admin pages in whatever way you think is best.
+
