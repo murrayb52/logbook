@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import</title>
+</head>
+<body>
+    <h1>Import books to the library here.</h1>
+    <h3>Importing ISBN: 9780446310789</h3>
+    <ul>
+        <!--<li> {{ response.title }}</li>-->
+        <li> Title: {{ book_data.title }}</li>
+        <li> Author: {{ book_data.authors.0.key }}</li>
+        <li> Publisher: {{ book_data.publishers.0 }}</li>
+    </ul>
+</body>
+</html>
