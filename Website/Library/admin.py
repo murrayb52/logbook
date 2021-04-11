@@ -2,18 +2,21 @@ from django.contrib import admin
 from .models import Book
 # Register your models here.
 
+
 class LibraryAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Title', {'fields': ['book_title']}),
+        ('ISBN', {'fields': ['isbn']}),
+        ('Title', {'fields': ['title']}),
         ('Author', {'fields': ['author']}),
-        ('ISBN', {'fields': ['ISBN']}),
+        ('#', {'fields': ['quantity']}),
+        ('In stock', {'fields': ['is_in_stock']}),
         ('Date information', {'fields': ['import_date'], 'classes': ['collapse']}),
 
     ]
 
-    list_display = ('book_title', 'author', 'import_date', 'ISBN')
+    list_display = ('isbn', 'title', 'author', 'quantity', 'import_date')
     # This adds a filter sidebar option to the admin page to filter out questions by pub_date
-    list_filter = ['import_date']
+    list_filter = ['title']
     # Search capability
     search_fields = ['book_title', 'author']
 

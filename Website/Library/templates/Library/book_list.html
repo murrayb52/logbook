@@ -9,7 +9,7 @@
     <h3>These are the books currently available in the library.</h3>
     <ul>
         {% for book in latest_books_list %}
-            <li><a href = "{% url 'Library:book_detail' book.id %}">{{book.book_title}}</a></li>
+            <li><a href = "{% url 'Library:book_detail' book.id %}">{{book.title}}</a></li>
         {% endfor %}
     </ul>
     {% else %}

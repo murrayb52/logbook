@@ -5,13 +5,12 @@
     <title>Import</title>
 </head>
 <body>
-    <h1>Import books to the library here.</h1>
-    <h3>Importing ISBN: 9780446310789</h3>
-    <ul>
-        <!--<li> {{ response.title }}</li>-->
-        <li> Title: {{ book_data.title }}</li>
-        <li> Author: {{ book_data.authors.0.key }}</li>
-        <li> Publisher: {{ book_data.publishers.0 }}</li>
-    </ul>
+    <h1>Library book importer</h1>
+    <form action="{% url 'Library:importer' %}" method="post">
+    {% csrf_token %}
+        <label for="isbn_box">Import book: </label>
+        <input type="text" id="isbn_box" name="isbn_box"><br>
+        <input type="submit" value="Submit"><br>
+    </form>
 </body>
 </html>
