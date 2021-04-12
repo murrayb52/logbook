@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import</title>
+</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+<!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
+<ul class="nav nav-pills justify-content-end">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'Library:import' %}">Book Importer</a>
+    </li>
+</ul>
+<body>
+    <h1>Library book importer</h1>
+    <form action="{% url 'Library:importer' %}" method="post">
+    {% csrf_token %}
+        <label for="isbn_box">Search with ISBN: </label>
+        <input type="text" id="isbn_box" name="isbn_box">
+        <input type="submit" value="Import book"><br>
+    </form>
+</body>
+</html>

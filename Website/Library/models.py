@@ -1,17 +1,13 @@
 from django.db import models
+import json
 
 
-# Create your models here.
 class Book(models.Model):
-    book_title = models.CharField(max_length=200)
+    isbn = models.IntegerField()
+    title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
-    import_date = models.DateTimeField('date added')
-    ISBN = models.IntegerField()
 
-    def __str__(self):
-        return self.book_title
+    import_date = models.DateTimeField('date added', null=True)
+    is_in_stock = models.BooleanField(default=True)
+    quantity = models.IntegerField(default=0)
 
-    """
-    def is_in_stock(self):
-            
-    """
