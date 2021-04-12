@@ -9,10 +9,11 @@ def get_book(isbn_num):
     fetch_url = isbn_url + isbn_num + '.json'
     response = requests.get(fetch_url).json()
     return response
-"""
-    #url = 'https://openlibrary.org/isbn/'
-    url = "https://jsonplaceholder.typicode.com/todos"
-    response = requests.get(url)
-    book_details = json.loads(response.text)
-    return book_details
-"""
+
+
+def get_author_name(author_code):
+    base_url = "https://openlibrary.org/"
+    fetch_url = base_url + author_code + '.json'
+    response = requests.get(fetch_url).json()
+    author_name = response["name"]
+    return author_name

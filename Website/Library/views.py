@@ -11,19 +11,22 @@ import json
 # Create your views here.
 
 
-def index(request):
-    return HttpResponse("Welcome to Logbook!")
+class HomeView(generic.TemplateView):
+    template_name = 'Library/home.html'
 
 
 # Add books to library using ISBN number
 def import_book(request):
     isbn = request.POST['isbn_box']
-    book = Book(isbn=isbn)
-    book.import_date = timezone.now()
+    # add imported book to database unless already there
+    book, created = Book.objects.get_or_create(isbn=isbn)
     book_data = services.get_book(isbn)
     book.title = book_data["title"]
+    book.author = services.get_author_name(book_data["authors"][0]["key"])
+    book.import_date = timezone.now()
+    book.quantity += 1
     book.save()
-    redirect_url = 'Library/book_detail/' + str(book.pk)
+    # redirect_url = 'Library/book_detail/' + str(book.pk)
     return HttpResponseRedirect(reverse('Library:book_detail', args=(book.pk,)))
 
 

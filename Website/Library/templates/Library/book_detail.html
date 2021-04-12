@@ -4,12 +4,27 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<br>
+<!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
+<ul class="nav nav-pills justify-content-end">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
+    </li>
+</ul>
+<br>
 <body>
     <h1>{{book.title}}</h1>
     <h2>Author: {{book.author}}</h2>
     <h3>ISBN: {{book.isbn}}</h3>
+    <h4>Items in stock: {{book.quantity}}</h4>
     <h4>Import date: {{book.import_date}}</h4>
-
 
 </body>
 </html>
