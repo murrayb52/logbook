@@ -20,11 +20,21 @@
 </ul>
 <br>
 <body>
-    <h1>{{book.title}}</h1>
-    <h2>Author: {{book.author}}</h2>
-    <h3>ISBN: {{book.isbn}}</h3>
-    <h4>Items in stock: {{book.quantity}}</h4>
-    <h4>Import date: {{book.import_date}}</h4>
-
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <img src={{ book.cover_url }} alt="Book cover" height="250">
+            </div>
+            <div class="col">
+                <h2>{{book.title}}</h2>
+                <h3>Author: {{book.author}}</h3>
+                <h6>ISBN: {{book.isbn}}</h6>
+                <h6>Import date: {{book.import_date}}</h6>
+                <br>
+                <h4>Items in stock: {{book.quantity}}</h4>
+                <a href={{ book.data_url }}>View in OpenLibrary</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

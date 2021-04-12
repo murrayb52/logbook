@@ -10,6 +10,7 @@ class LibraryAdmin(admin.ModelAdmin):
         ('Author', {'fields': ['author']}),
         ('#', {'fields': ['quantity']}),
         ('In stock', {'fields': ['is_in_stock']}),
+        ('Cover URL', {'fields': ['cover_url']}),
         ('Date information', {'fields': ['import_date'], 'classes': ['collapse']}),
 
     ]

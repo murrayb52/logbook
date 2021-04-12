@@ -23,6 +23,8 @@ def import_book(request):
     book_data = services.get_book(isbn)
     book.title = book_data["title"]
     book.author = services.get_author_name(book_data["authors"][0]["key"])
+    book.data_url = "https://openlibrary.org/isbn/" + str(isbn)
+    book.cover_url = "https://covers.openlibrary.org/b/id/" + str(book_data["covers"][0]) + "-L.jpg"
     book.import_date = timezone.now()
     book.quantity += 1
     book.save()
