@@ -1,20 +1,32 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
-<ul class="nav nav-pills justify-content-end">
-    <li class="nav-item">
-        <a class="nav-link active" href="{% url 'Library:home' %}">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
-    </li>
-</ul>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <title>ReReads: Home</title>
 
-<h1>Welcome to ReReads!</h1>
-<h3>The site to locate second-hand books in Cape Town</h3>
-<br>
-<h5>If you're looking for a book, check out our Library tab to see what is in stock.<br>If you're a vendor and want to list a book on our site, head to the Book importer.</h5>
-
+        <!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
+        <div class="p-3 mb-2 bg-light text-white">
+            <ul class="nav nav-tabs justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'Library:home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
+                </li>
+            </ul>
+        </div>
+    </head>
+    <body>
+        <h1>Welcome to ReReads!</h1>
+        <h3>The site to locate second-hand books in Cape Town</h3>
+        <br>
+        <h5>If you're looking for a book, check out our Library tab to see what is in stock.<br>If you're a vendor and want to list a book on our site, head to the Book importer.</h5>
+    </body>
+</html>

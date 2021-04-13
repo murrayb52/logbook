@@ -2,22 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of Books</title>
-</head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
-<!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
-<ul class="nav nav-pills justify-content-end">
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" href="{% url 'Library:book_list' %}">Library</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
-    </li>
-</ul>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <title>ReReads: Library</title>
+
+    <!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
+    <div class="p-3 mb-2 bg-light text-white">
+        <ul class="nav nav-tabs justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'Library:book_list' %}">Library</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
+            </li>
+        </ul>
+    </div>
+</head>
+
 <body>
     {% if latest_books_list %}
     <h3>These are the books currently available in the library.</h3>

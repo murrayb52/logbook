@@ -1,40 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-<br>
-<!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
-<ul class="nav nav-pills justify-content-end">
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
-    </li>
-</ul>
-<br>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-4">
-                <img src={{ book.cover_url }} alt="Book cover" height="250">
-            </div>
-            <div class="col">
-                <h2>{{book.title}}</h2>
-                <h3>Author: {{book.author}}</h3>
-                <h6>ISBN: {{book.isbn}}</h6>
-                <h6>Import date: {{book.import_date}}</h6>
-                <br>
-                <h4>Items in stock: {{book.quantity}}</h4>
-                <a href={{ book.data_url }}>View in OpenLibrary</a>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <title>ReReads: Home</title>
+
+        <!-- Nav bar using .nav (nav-tabs>Fill and Justify)-->
+        <div class="p-3 mb-2 bg-tabs text-white">
+            <ul class="nav nav-tabs justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Library:home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Library:book_list' %}">Library</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'Library:import' %}">Book Importer</a>
+                </li>
+            </ul>
+        </div>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <img src={{ book.cover_url }} class="img-thumbnail" alt="Book cover" height="250">
+                </div>
+                <div class="col">
+                    <h2>{{book.title}}</h2>
+                    <h3>Author: {{book.author}}</h3>
+                    <h6>ISBN: {{book.isbn}}</h6>
+                    <h6>Import date: {{book.import_date}}</h6>
+                    <br>
+                    <h4>Items in stock: {{book.quantity}}</h4>
+                    <a href={{ book.data_url }}>View in OpenLibrary</a>
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>
